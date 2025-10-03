@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Missões Supersônicas do Davi</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #0d1b2a;
+            color: #ffffff;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            background-image: url('https://i.imgur.com/k6Kx01x.png'); /* Background inspirado em Sonic */
+            background-size: cover;
+            background-attachment: fixed;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            border-bottom: 4px solid #f0de1a;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        header img {
+            width: 80px;
+            image-rendering: pixelated;
+        }
+
+        h1 {
+            font-family: 'Press Start 2P', cursive;
+            color: #f0de1a;
+            font-size: 2.5em;
+            text-shadow: 3px 3px #000000;
+        }
+
+        h2 {
+            font-family: 'Press Start 2P', cursive;
+            color: #00c8ff;
+            font-size: 1.8em;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+
+        .mission-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .mission-card {
+            background-color: #1b263b;
+            border: 2px solid #415a77;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 120px; /* Garante que os cards tenham altura similar */
+        }
+
+        .mission-card:hover {
+            transform: scale(1.05);
+            border-color: #f0de1a;
+        }
+        
+        .mission-card.completed {
+            background-color: #005f00;
+            border-color: #50ff50;
+        }
+
+        .mission-card img {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 10px;
+            image-rendering: pixelated;
+        }
+        
+        .mission-card.completed .ring {
+            filter: grayscale(100%) opacity(50%);
+        }
+
+        .mission-card span {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .progress-section {
+            background-color: #1b263b;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #415a77;
+        }
+        
+        #ring-counter, #emerald-gallery {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        #ring-counter span {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 2em;
+            color: #f0de1a;
+        }
+        
+        .emerald {
+            width: 40px;
+            height: 40px;
+            background-image: url('https://i.imgur.com/8x2jN5T.png'); /* Default Emerald (Red) - will be overridden if greyed out */
+            background-size: contain;
+            background-repeat: no-repeat;
+            image-rendering: pixelated;
+            filter: grayscale(100%) brightness(50%); /* Greyed out by default */
+            transition: filter 0.3s;
+        }
+
+        .emerald.collected {
+            filter: grayscale(0%) brightness(100%);
+        }
+        
+        /* Specific URLs for Chaos Emeralds Sprites (from your Image 3) */
+        /* Red: The default, so it's the base image */
+        #emerald-1.collected { background-image: url('https://i.imgur.com/8x2jN5T.png'); } 
+        #emerald-2.collected { background-image: url('https://i.imgur.com/Gj8W2h7.png'); } /* Blue */
+        #emerald-3.collected { background-image: url('https://i.imgur.com/c4YkX1p.png'); } /* Yellow */
+        #emerald-4.collected { background-image: url('https://i.imgur.com/N5g7qfI.png'); } /* Green */
+        #emerald-5.collected { background-image: url('https://i.imgur.com/7gK7E5D.png'); } /* White */
+        #emerald-6.collected { background-image: url('https://i.imgur.com/X2Dqg8E.png'); } /* Purple */
+        #emerald-7.collected { background-image: url('https://i.imgur.com/i9Tj4fR.png'); } /* Cyan */
+
+        .reset-button {
+            margin-top: 30px;
+            margin-left: 10px; /* Adicionado para espaçar os botões */
+            margin-right: 10px; /* Adicionado para espaçar os botões */
+            padding: 10px 20px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8em; /* Ajustado para caber melhor */
+            background-color: #e63946;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .reset-button:hover {
+            background-color: #d00000;
+        }
+
+        footer {
+            margin-top: 40px;
+            font-size: 0.9em;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <img src="https://i.imgur.com/O6L6N5D.gif" alt="Sonic Sprite" style="width: 80px; height: auto;"> <h1>Missões Supersônicas do Davi</h1>
+        </header>
+
+        <main>
+            <h2>Mapa de Zonas Escolares (Missões do Dia)</h2>
+            <p>Dr. Eggman está criando desafios! Complete suas missões, Aventureiro Sônico, para coletar Anéis Dourados!</p>
+            <div id="mission-container" class="mission-grid">
+                </div>
+
+            <div class="progress-section">
+                <h2>Placar de Anéis e Esmeraldas</h2>
+                <div id="ring-counter">
+                    <img src="https://i.imgur.com/gK2R83F.png" alt="Anel Dourado" style="width:40px; image-rendering: pixelated;"> <span id="rings-collected">0</span>
+                </div>
+                
+                <p>Junte <strong>todos os anéis do dia</strong> para ganhar uma Esmeralda do Caos!</p>
+                <div id="emerald-gallery">
+                    <div id="emerald-1" class="emerald"></div>
+                    <div id="emerald-2" class="emerald"></div>
+                    <div id="emerald-3" class="emerald"></div>
+                    <div id="emerald-4" class="emerald"></div>
+                    <div id="emerald-5" class="emerald"></div>
+                    <div id="emerald-6" class="emerald"></div>
+                    <div id="emerald-7" class="emerald"></div>
+                </div>
+            </div>
+
+            <button id="reset-day" class="reset-button">Reiniciar Missões do Dia</button>
+            <button id="reset-week" class="reset-button">Reiniciar Esmeraldas (Nova Semana)</button>
+        </main>
+
+        <footer>
+            <p>Criado com carinho para o Aventureiro Sônico Davi. Sprites e personagens pertencem à SEGA.</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const missions = [
+                { id: 1, name: 'Evento', icon: 'https://i.imgur.com/gK2R83F.png' }, // Anel
+                { id: 2, name: 'Culto', icon: 'https://i.imgur.com/gK2R83F.png' },
+                { id: 3, name: 'Parque', icon: 'https://i.imgur.com/gK2R83F.png' },
+                { id: 4, name: 'Aula', icon: 'https://i.imgur.com/gK2R83F.png' },
+                { id: 5, name: 'Ed. Física', icon: 'https://i.imgur.com/gK2R83F.png' },
+                { id: 6, name: 'Natação', icon: 'https://i.imgur.com/gK2R83F.png' },
+                { id: 7, name: 'Artes', icon: 'https://i.imgur.com/gK2R83F.png' },
+                { id: 8, name: 'Aula de Bíblia', icon: 'https://i.imgur.com/gK2R83F.png' },
+                { id: 9, name: 'Inglês', icon: 'https://i.imgur.com/gK2R83F.png' },
+                { id: 10, name: 'Oração', icon: 'https://i.imgur.com/gK2R83F.png' }
+            ];
+
+            const missionContainer = document.getElementById('mission-container');
+            const ringsCollectedSpan = document.getElementById('rings-collected');
+            const emeralds = document.querySelectorAll('.emerald');
+
+            let state = {
+                completedMissions: [],
+                collectedEmeralds: 0
+            };
+            
+            // Tenta carregar o estado salvo
+            function loadState() {
+                const savedState = localStorage.getItem('sonicMissionsState');
+                if (savedState) {
+                    state = JSON.parse(savedState);
+                }
+            }
+
+            // Salva o estado atual
+            function saveState() {
+                localStorage.setItem('sonicMissionsState', JSON.stringify(state));
+            }
+
+            // Renderiza as missões na tela
+            function renderMissions() {
+                missionContainer.innerHTML = '';
+                missions.forEach(mission => {
+                    const card = document.createElement('div');
+                    card.className = 'mission-card';
+                    card.dataset.missionId = mission.id;
+
+                    if (state.completedMissions.includes(mission.id)) {
+                        card.classList.add('completed');
+                    }
+
+                    card.innerHTML = `
+                        <img class="ring" src="${mission.icon}" alt="Anel Dourado">
+                        <span>${mission.name}</span>
+                    `;
+
+                    card.addEventListener('click', () => toggleMission(mission.id));
+                    missionContainer.appendChild(card);
+                });
+                updateCounters();
+            }
+
+            // Atualiza os contadores
+            function updateCounters() {
+                ringsCollectedSpan.textContent = state.completedMissions.length;
+
+                // Atualiza as esmeraldas
+                emeralds.forEach((emerald, index) => {
+                    if (index < state.collectedEmeralds) {
+                        emerald.classList.add('collected');
+                    } else {
+                        emerald.classList.remove('collected');
+                    }
+                });
+            }
+            
+            // Lógica para completar ou descompletar uma missão
+            function toggleMission(missionId) {
+                const missionIndex = state.completedMissions.indexOf(missionId);
+                if (missionIndex > -1) {
+                    state.completedMissions.splice(missionIndex, 1); // Descompleta
+                } else {
+                    state.completedMissions.push(missionId); // Completa
+                }
+
+                // Verifica se todas as missões foram completadas
+                if (state.completedMissions.length === missions.length) {
+                    if (state.collectedEmeralds < 7) {
+                        state.collectedEmeralds++;
+                        alert('Incrível! Você coletou todos os anéis e ganhou uma Esmeralda do Caos!');
+                    }
+                }
+                
+                saveState();
+                renderMissions();
+            }
+
+            // Resetar o dia
+            document.getElementById('reset-day').addEventListener('click', () => {
+                if (confirm('Tem certeza que deseja reiniciar as missões de hoje? Os anéis serão zerados.')) {
+                    state.completedMissions = [];
+                    saveState();
+                    renderMissions();
+                }
+            });
+
+            // Resetar a semana
+            document.getElementById('reset-week').addEventListener('click', () => {
+                if (confirm('Isso irá zerar TODAS as Esmeraldas do Caos. Deseja começar uma nova semana?')) {
+                    state.collectedEmeralds = 0;
+                    state.completedMissions = [];
+                    saveState();
+                    renderMissions();
+                }
+            });
+
+            // Inicialização
+            loadState();
+            renderMissions();
+        });
+    </script>
+</body>
+</html>
